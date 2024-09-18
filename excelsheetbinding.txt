@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export to Excel Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Export User Data to Excel</h1>
+    <button id="exportButton">Export to Excel</button>
+
+    <script>
+        // Sample response data
+        const responseData = [
+            {
+                user: 'John Doe',
+                validFor: '1 Month',
+                validTill: '2024-10-01',
+                countries: 'USA, Canada, Mexico'
+            },
+            {
+                user: 'Jane Smith',
+                validFor: '6 Months',
+                validTill: '2025-03-01',
+                countries: 'UK, Germany'
+            }
+        ];
+
+        function generateExcel(data) {
+            // Preprocess to split countries into separate columns
+            const processedData = data.map(item => {
+                const countriesArray = item.countries.split(', ');
+                return {
+                    user: item.user,
+                    validFor: item.validFor,
+                    validTill: item.validTill,
+                    country1: countriesArray[0] || '',
+                    country2: countriesArray[1] || '',
+                    country3: countriesArray[2] || '' // Adjust based on expected max countries
+                };
+            });
+
+            // Create a new workbook
+            const wb = XLSX.utils.book_new();
+
+            // Convert the processed data to a worksheet
+            const ws = XLSX.utils.json_to_sheet(processedData);
+
+            // Append the worksheet to the workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'User Data');
+
+            // Generate Excel file and trigger download
+            XLSX.writeFile(wb, 'UserData.xlsx');
+        }
+
+        // Event listener for the button
+        document.getElementById('exportButton').addEventListener('click', () => {
+            generateExcel(responseData);
+        });
+    </script>
+</body>
+</html>

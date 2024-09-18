@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>AngularJS Multi-Select Dropdown with Checkboxes</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <style>
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .dropdown-content label {
+      display: block;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .dropdown-content label:hover {
+      background-color: #ddd;
+    }
+    .show {
+      display: block;
+    }
+  </style>
+</head>
+<body ng-controller="myCtrl">
+
+  <!-- Dropdown with Checkboxes -->
+  <div class="dropdown">
+    <button ng-click="toggleDropdown($event)" class="dropbtn">Select Fruits</button>
+    <div id="myDropdown" class="dropdown-content" ng-class="{'show': dropdownOpen}">
+      <label>
+        <input type="checkbox" ng-model="selectAll" ng-change="toggleSelectAll()"> Select All
+      </label>
+      <label ng-repeat="fruit in fruits">
+        <input type="checkbox" ng-model="fruit.selected" ng-change="update()">{{fruit.name}}
+      </label>
+    </div>
+  </div>
+
+  <!-- Display selected fruits -->
+  <h2>Selected Fruits:</h2>
+  <ul>
+    <li ng-repeat="fruit in fruits | filter:{selected:true}">{{ fruit.name }}</li>
+  </ul>
+
+  <script>
+    var app = angular.module('myApp', []);
+
+    app.controller('myCtrl', function($scope) {
+      // List of fruits with a 'selected' property
+      $scope.fruits = [
+        { name: 'Apple', selected: false },
+        { name: 'Banana', selected: false },
+        { name: 'Orange', selected: false }
+      ];
+
+      // Variable to control dropdown visibility
+      $scope.dropdownOpen = false;
+
+      // Variable to control 'Select All' checkbox
+      $scope.selectAll = false;
+
+      // Toggle dropdown visibility
+      $scope.toggleDropdown = function(event) {
+        event.stopPropagation(); // Prevent the click event from closing the dropdown immediately
+        $scope.dropdownOpen = !$scope.dropdownOpen;
+      };
+
+      // Close the dropdown if the user clicks outside of it
+      document.addEventListener('click', function(event) {
+        var dropdown = document.getElementById('myDropdown');
+        var button = document.querySelector('.dropbtn');
+        if (!dropdown.contains(event.target) && event.target !== button) {
+          $scope.$apply(function() {
+            $scope.dropdownOpen = false;
+          });
+        }
+      });
+
+      // Update selected fruits array
+      $scope.update = function() {
+        $scope.selectedfruit = $scope.fruits
+          .filter(function(fruit) {
+            return fruit.selected;
+          })
+          .map(function(fruit) {
+            return fruit.name;
+          });
+        
+        // Update 'Select All' checkbox based on individual checkboxes
+        $scope.selectAll = $scope.fruits.every(function(fruit) {
+          return fruit.selected;
+        });
+      };
+
+      // Toggle 'Select All' checkbox
+      $scope.toggleSelectAll = function() {
+        $scope.fruits.forEach(function(fruit) {
+          fruit.selected = $scope.selectAll;
+        });
+        $scope.update(); // Update selected fruits array
+      };
+    });
+  </script>
+</body>
+</html>

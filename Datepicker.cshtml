@@ -1,0 +1,133 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AngularJS with jQuery and Bootstrap</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- AngularJS CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <!-- Bootstrap JS CDN -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Flatpickr CSS CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <!-- Flatpickr JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        .custom-btn {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body ng-controller="MainController">
+
+    <div class="container">
+        <div class="col-sm-2">
+            <label>Valid From</label>
+            <input type="text" id="Valid_From" placeholder="mm/dd/yyyy" ng-model="Valid_From" class="form-control datepicker-readonly">
+        </div>
+
+        <h2>Hello {{ Valid_From | date:'MM/dd/yyyy' }}</h2>
+
+        <div class="col-sm-2">
+            <label>Valid Till</label>
+            <input type="text" id="Valid_Till" placeholder="mm/dd/yyyy" ng-model="Valid_Till" class="form-control datepicker-readonly">
+        </div>
+    </div>
+
+        <input type="submit" name="name" value="submit" ng-click="submit()" />
+
+    <script>
+      
+        var app = angular.module('myApp', []);
+
+        app.controller('MainController', ['$scope','$filter', function ($scope,$filter) {
+
+            $scope.Valid_From = "";
+            $scope.Valid_Till = ""; 
+
+            const validFromPicker = flatpickr("#Valid_From", {
+                dateFormat: "m/d/Y",
+                minDate: 0,          
+                onChange: function (selectedDates) {
+                    if (selectedDates[0]) 
+                    {
+                        const date = selectedDates[0];
+                        console.log("the selcted ate is", date, typeof date);
+
+                        const formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+
+                        console.log("Selected Valid From date (mm/dd/yyyy):", formattedDate);
+
+                        $scope.$apply(function () 
+                        {
+                            $scope.Valid_From = formattedDate; 
+                        });
+
+                       
+                        validTillPicker.set('minDate', formattedDate);
+                    }
+                }
+            });
+
+            const validTillPicker = flatpickr("#Valid_Till", {
+                dateFormat: "m/d/Y",  
+                minDate: 0,         
+                onChange: function (selectedDates) {
+                    if (selectedDates[0]) {
+                        const date = selectedDates[0];
+                        const formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
+
+                        // Log formatted date to console
+                        console.log("Selected Valid Till date (mm/dd/yyyy):", formattedDate);
+
+                        $scope.$apply(function () {
+                            $scope.Valid_Till = formattedDate;  
+                        });
+
+                        validFromPicker.set('maxDate', formattedDate);
+                    }
+                }
+            });
+
+
+            $scope.submit= function(){
+
+                console.log($scope.Valid_From, typeof $scope.Valid_From);
+                console.log($scope.Valid_Till, typeof $scope.Valid_Till);
+
+                $scope.testingdate = "9/14/2024 12:00:00 AM";
+                $scope.Valid_From_testing = $filter('date')(new Date($scope.testingdate), 'MM/dd/yyyy');
+
+                console.log($scope.Valid_From_testing); // Output: 09/04/2024 in as stored format
+
+
+                $scope.Valid_From = $scope.Valid_From_testing;
+            }
+
+           
+           
+
+        }]);
+    </script>
+</body>
+</html>

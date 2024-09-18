@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>AngularJS Filter Example</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="myCtrl">
+  <!-- Dropdown to select User Type -->
+  <label for="userTypeSelect">Select User Type:</label>
+  <select id="userTypeSelect" ng-model="selectedUserType" ng-change="applyFilter()">
+    <option value="">All</option>
+    <option value="admin">Admin</option>
+    <option value="user">User</option>
+    <option value="guest">Guest</option>
+  </select>
+
+  <!-- Display filtered user list -->
+  <h3>Filtered User List:</h3>
+  <ul>
+    <li ng-repeat="user in filteredUsers">{{ user.name }} ({{ user.type }})</li>
+  </ul>
+
+
+{{selectedUserType}}
+
+  <script>
+    var app = angular.module('myApp', []);
+
+    app.controller('myCtrl', function($scope, $filter) {
+      // List of users
+      $scope.ListUserTypeFilter = [
+        { name: 'Alice', type: 'admin' },
+        { name: 'Bob', type: 'user' },
+        { name: 'Charlie', type: 'admin' },
+        { name: 'David', type: 'guest' },
+        { name: 'Eve', type: 'user' }
+      ];
+
+      // Default filtered users
+      $scope.filteredUsers = $scope.ListUserTypeFilter;
+
+      // Selected user type from dropdown
+      $scope.selectedUserType = '';
+
+      // Apply filter based on selected user type
+      $scope.applyFilter = function() {
+        var selectedType = $scope.selectedUserType;
+        if (selectedType) {
+          // Use AngularJS filter service to filter users
+          $scope.filteredUsers = $filter('filter')($scope.ListUserTypeFilter, { type: selectedType });
+        } else {
+          // If no filter is selected, show all users
+          $scope.filteredUsers = $scope.ListUserTypeFilter;
+        }
+      };
+    });
+  </script>
+</body>
+</html>
