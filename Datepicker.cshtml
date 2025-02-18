@@ -68,7 +68,7 @@
             const validFromPicker = flatpickr("#Valid_From", {
                 dateFormat: "m/d/Y",
                 minDate: 0,          
-                onChange: function (selectedDates) {
+                onChange: function (Date,selectedDates) {   //ddebug and console both paramters
                     if (selectedDates[0]) 
                     {
                         const date = selectedDates[0];
@@ -92,7 +92,7 @@
             const validTillPicker = flatpickr("#Valid_Till", {
                 dateFormat: "m/d/Y",  
                 minDate: 0,         
-                onChange: function (selectedDates) {
+                onChange: function (date,selectedDates) {
                     if (selectedDates[0]) {
                         const date = selectedDates[0];
                         const formattedDate = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear();
